@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramadhan</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top, #1c2b45, #0e1625);
+  overflow: hidden;
+}
+
+/* SIDE DECOR */
+.side {
+  position: absolute;
+  top: 0;
+  width: 80px;
+  height: 100%;
+  pointer-events: none;
+}
+.left { left: 0; }
+.right { right: 0; }
+
+.side span {
+  position: absolute;
+  font-size: 22px;
+  opacity: .8;
+  animation: sideFloat 6s ease-in-out infinite;
+}
+@keyframes sideFloat {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0); }
+}
+
+/* MAIN */
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 90%;
+  max-width: 420px;
+  min-height: 70vh;
+  background: rgba(255,255,255,0.95);
+  border-radius: 26px;
+  padding: 26px 22px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: pop .6s ease;
+}
+
+#text {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #344;
+  min-height: 160px;
+  animation: textFloat 3s ease-in-out infinite;
+}
+
+/* HALAMAN PERTAMA */
+.big-text {
+  font-size: 30px;
+  font-weight: 600;
+  margin-top: 30px;
+}
+
+/* VISUAL */
+.visual {
+  height: 120px;
+  position: relative;
+}
+.moon {
+  font-size: 70px;
+  animation: moonFloat 4s ease-in-out infinite;
+}
+.star {
+  position: absolute;
+  font-size: 22px;
+  animation: spin 6s linear infinite;
+}
+.star.s1 { left: 20%; top: 10px; }
+.star.s2 { right: 20%; top: 40px; }
+.star.s3 { left: 35%; bottom: 10px; }
+.star.s4 { right: 35%; bottom: 5px; }
+
+/* BUTTON */
+button {
+  border: none;
+  background: linear-gradient(135deg, #9fcfff, #cfe9ff);
+  color: #3a6ea5;
+  padding: 14px;
+  border-radius: 22px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(120,180,255,.45);
+  transition: .3s;
+}
+button:hover { transform: scale(1.06); }
+button:active { transform: scale(0.95); }
+
+/* ANIM */
+@keyframes pop {
+  0% {opacity:0; transform: scale(.9);}
+  100% {opacity:1; transform: scale(1);}
+}
+@keyframes textFloat {
+  0% {transform: translateY(0);}
+  50% {transform: translateY(-6px);}
+  100% {transform: translateY(0);}
+}
+@keyframes moonFloat {
+  0% {transform: translateY(0);}
+  50% {transform: translateY(-10px);}
+  100% {transform: translateY(0);}
+}
+@keyframes spin {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDE -->
+<div class="side left">
+  <span style="top:10%;">🌙</span>
+  <span style="top:30%;">⭐</span>
+  <span style="top:55%;">✨</span>
+  <span style="top:75%;">💫</span>
+</div>
+<div class="side right">
+  <span style="top:15%;">⭐</span>
+  <span style="top:35%;">🌙</span>
+  <span style="top:60%;">✨</span>
+  <span style="top:80%;">🤍</span>
+</div>
+
+<!-- AUDIO -->
+<audio id="bgm" src="soundweb.mp3" loop preload="auto"></audio>
+
+<div class="container">
+  <div class="card">
+    <div id="text"></div>
+
+    <div class="visual">
+      <div class="moon">🌙</div>
+      <div class="star s1">⭐</div>
+      <div class="star s2">✨</div>
+      <div class="star s3">💫</div>
+      <div class="star s4">⭐</div>
+    </div>
+
+    <button id="btn" onclick="nextPage()">Lanjut 🌙</button>
+  </div>
+</div>
+
+<script>
+const pages = [
+  "hai fer 👋",
+  "u know me, right? sorry kalo ganggu.. cuma mau bilang bntar, gapapa kan?",
+  "kamu lagi suka main roblox kan? robuxnya delay 7 days yaa tunggu ajaa, sorry gabisa banyak, intinya bkn itu yg mau aku bilang",
+  "bntar lagi kan mau puasa ya, jadi aku sekeluarga mau minta maaf selama ini ke kamu, aku tau aku byk salah",
+  "kamu tau ga? aku disuruh cek ke psikiater sama ortu ku wkwk, ya meskipun info ga penting juga kan, intinya aku minta maaf aja yah",
+  "aku janji mulai skrg ga akan ganggu kamu lagi fer, sorry webnya polos gini, masih belajar buatnya wkwk. berbahagialah selalu yaa 🤍"
+];
+
+let pageIndex = 0;
+let charIndex = 0;
+let typing;
+let musicPlayed = false;
+
+const textEl = document.getElementById("text");
+const btn = document.getElementById("btn");
+const music = document.getElementById("bgm");
+
+function typeText() {
+  if (charIndex < pages[pageIndex].length) {
+    textEl.innerHTML += pages[pageIndex].charAt(charIndex);
+    charIndex++;
+  } else clearInterval(typing);
+}
+
+function showPage() {
+  textEl.innerHTML = "";
+  textEl.className = pageIndex === 0 ? "big-text" : "";
+  charIndex = 0;
+  typing = setInterval(typeText, 45);
+
+  btn.innerText = pageIndex === pages.length - 1
+    ? "makasii udah baca 🤍"
+    : "Lanjut 🌙";
+}
+
+function nextPage() {
+  if (!musicPlayed) {
+    music.currentTime = 0;
+    music.play();
+    musicPlayed = true;
+  }
+  if (pageIndex < pages.length - 1) {
+    pageIndex++;
+    showPage();
+  }
+}
+
+showPage();
+</script>
+
+</body>
+</html>
